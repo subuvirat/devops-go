@@ -78,54 +78,86 @@ jobs:
     needs: code-quality
 
     permissions:
-      contents: read
-      id-token: write
+     contents: read
+     id-token: write
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-      - name: Login to Azure using OIDC
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
- 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+    - name: Login to Azure using OIDC
+      uses: azure/login@v2
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Get ACR access token
-        id: acr-token
-        env:
-          ACR_NAME: ${{ vars.ACR_NAME }}
-        shell: bash
-        run: |
-          ACR_TOKEN=$(az acr login \
-            --name "$ACR_NAME" \
-            --expose-token \
-            --output tsv \
-            --query accessToken)
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
 
-          echo "::add-mask::$ACR_TOKEN"
-          echo "token=$ACR_TOKEN" >> "$GITHUB_OUTPUT"
+    # Build image locally - DO NOT PUSH YET
+    - name: Build Docker image
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        file: ./Dockerfile
+        load: true
+        tags: |
+          go-web:${{ github.sha }}
 
-      - name: Login to ACR
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ vars.ACR_NAME }}.azurecr.io
-          username: 00000000-0000-0000-0000-000000000000
-          password: ${{ steps.acr-token.outputs.token }}
+    # Scan the locally built image
+    - name: Trivy Container Image Scan
+      uses: aquasecurity/trivy-action@v0.36.0
+      with:
+        image-ref: go-web:${{ github.sha }}
+        format: table
+        exit-code: '1'
+        ignore-unfixed: true
+        vuln-type: os,library
+        severity: CRITICAL,HIGH
 
-      - name: Build and Push to ACR
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: ./Dockerfile
-          push: true
-          tags: |
-            ${{ vars.ACR_NAME }}.azurecr.io/go-web:${{ github.sha }}
-            ${{ vars.ACR_NAME }}.azurecr.io/go-web:${{ github.run_id }}
+    # Get ACR access token ONLY after Trivy passes
+    - name: Get ACR access token
+      id: acr-token
+      env:
+        ACR_NAME: ${{ vars.ACR_NAME }}
+      shell: bash
+      run: |
+        ACR_TOKEN=$(az acr login \
+          --name "$ACR_NAME" \
+          --expose-token \
+          --output tsv \
+          --query accessToken)
+
+        echo "::add-mask::$ACR_TOKEN"
+        echo "token=$ACR_TOKEN" >> "$GITHUB_OUTPUT"
+
+    - name: Login to ACR
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ vars.ACR_NAME }}.azurecr.io
+        username: 00000000-0000-0000-0000-000000000000
+        password: ${{ steps.acr-token.outputs.token }}
+
+    # Push ONLY after Trivy passes
+    - name: Push image to ACR
+      run: |
+        docker tag \
+          go-web:${{ github.sha }} \
+          ${{ vars.ACR_NAME }}.azurecr.io/go-web:${{ github.sha }}
+
+        docker tag \
+          go-web:${{ github.sha }} \
+          ${{ vars.ACR_NAME }}.azurecr.io/go-web:${{ github.run_id }}
+
+        docker push \
+          ${{ vars.ACR_NAME }}.azurecr.io/go-web:${{ github.sha }}
+
+        docker push \
+          ${{ vars.ACR_NAME }}.azurecr.io/go-web:${{ github.run_id }}
+      
+   
+
 
   update-newtag-in-helm-chart:
     runs-on: ubuntu-latest
