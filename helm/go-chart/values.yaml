@@ -8,7 +8,7 @@ image:
   repository: subashacr.azurecr.io/go-web
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "37050460321"
+  tag: "37213726309"
 
 # ingress:
 #   enabled: false
