@@ -90,7 +90,7 @@ jobs:
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          subscription-id: "50dfd0cf-78bb-4abf-bf64-4e9f80c7956f"
  
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
