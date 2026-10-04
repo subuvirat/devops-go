@@ -107,7 +107,7 @@ jobs:
 
     # Scan the locally built image
     - name: Trivy Container Image Scan
-      uses: aquasecurity/trivy-action@v0.36.0
+      uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25
       with:
         image-ref: go-web:${{ github.sha }}
         format: table
