@@ -5,10 +5,19 @@
 replicaCount: 1
 
 image:
-  repository: subashacr.azurecr.io/go-web
+  repository: subashacr1002.azurecr.io/go-web
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "37219564303"
+
+nodeSelector:
+  kubernetes.azure.com/agentpool: userpool
+
+tolerations:
+  - key: "kubernetes.azure.com/scalesetpriority"
+    operator: "Equal"
+    value: "spot"
+    effect: "NoSchedule"  
 
 # ingress:
 #   enabled: false

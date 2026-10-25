@@ -1,0 +1,27 @@
+
+global:
+  nodeSelector:
+    kubernetes.azure.com/agentpool: userpool
+
+  tolerations:
+    - key: "kubernetes.azure.com/scalesetpriority"
+      operator: "Equal"
+      value: "spot"
+      effect: "NoSchedule"
+
+redis-ha:
+  enabled: false
+
+controller:
+  replicas: 1
+
+repoServer:
+  replicas: 1
+
+applicationSet:
+  replicaCount: 1
+
+server:
+  replicas: 1
+  service:
+    type: ClusterIP

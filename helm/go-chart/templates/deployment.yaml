@@ -18,8 +18,17 @@ spec:
     metadata:
       labels:
         app: go-web-app
-
+        
     spec:
+      # Schedule pods on the AKS user node pool
+      nodeSelector:
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
+
+      # Allow scheduling on the Spot node's NoSchedule taint
+      tolerations:
+        {{- toYaml .Values.tolerations | nindent 8 }}    
+
+    
       containers:
         - name: go-web-app
 
@@ -35,4 +44,4 @@ spec:
 
             limits:
               cpu: "500m"
-              memory: "512Mi"
+              memory: "512Mi"        
