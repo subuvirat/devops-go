@@ -4,9 +4,11 @@ kind: Ingress
 metadata:
   name: go-web-app
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+      kubernetes.io/ingress.class: azure/application-gateway
+      appgw.ingress.kubernetes.io/health-probe-path: /
+
 spec:
-  ingressClassName: nginx
+
   rules:
   - host: go-web-app.local
     http:
