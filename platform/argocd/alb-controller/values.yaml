@@ -3,7 +3,7 @@ albController:
   namespace: azure-alb-system
 
   podIdentity:
-    clientID: "${{ secrets.MGMT_CLINET_ID }}"
+    clientID: "183d12d4-eb5c-4327-894c-13f911cf4167"
 
   controller:
     replicaCount: 2
