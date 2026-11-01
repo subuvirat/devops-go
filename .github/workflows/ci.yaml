@@ -165,7 +165,7 @@ jobs:
     needs: push
 
     permissions:
-    contents: write
+      contents: write
 
     steps:
     - name: Checkout repository
