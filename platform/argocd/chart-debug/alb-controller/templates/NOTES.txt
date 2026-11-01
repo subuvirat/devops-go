@@ -1,1 +1,0 @@
-Congratulations! The ALB Controller has been installed in your Kubernetes cluster!
