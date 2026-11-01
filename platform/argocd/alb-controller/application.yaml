@@ -1,0 +1,37 @@
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+
+metadata:
+  name: alb-controller
+  namespace: argocd
+
+spec:
+  project: default
+
+  sources:
+    # Source 1: Official Microsoft Helm chart
+    - repoURL: mcr.microsoft.com/application-lb/charts
+      chart: alb-controller
+      targetRevision: 1.12.4
+      helm:
+        releaseName: alb-controller
+        valueFiles:
+          - $values/platform/argocd/alb-controller/values.yaml
+
+    # Source 2: Git repository containing Helm values
+    - repoURL: https://github.com/subuvirat/devops-go.git
+      targetRevision: main
+      ref: values
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: azure-alb-system
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+
+    syncOptions:
+      - CreateNamespace=true
