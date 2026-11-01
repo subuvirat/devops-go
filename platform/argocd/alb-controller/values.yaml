@@ -13,6 +13,5 @@ albController:
 
     tolerations:
       - key: CriticalAddonsOnly
-        operator: Equal
-        value: "true"
+        operator: Exists
         effect: NoSchedule
