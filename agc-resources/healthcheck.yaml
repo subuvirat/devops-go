@@ -15,7 +15,7 @@ spec:
     timeout: 3s
     healthyThreshold: 2
     unhealthyThreshold: 3
-    port: 80
+    port: 8080
     http:
       path: /home
       match:
