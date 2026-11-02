@@ -1,0 +1,24 @@
+
+apiVersion: alb.networking.azure.io/v1
+kind: HealthCheckPolicy
+metadata:
+  name: go-web-healthcheck
+  namespace: default
+spec:
+  targetRef:
+    group: ""
+    kind: Service
+    name: go-web-app
+    namespace: default
+  default:
+    interval: 5s
+    timeout: 3s
+    healthyThreshold: 2
+    unhealthyThreshold: 3
+    port: 80
+    http:
+      path: /home
+      match:
+        statusCodes:
+          - start: 200
+            end: 200
