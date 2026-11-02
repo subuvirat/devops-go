@@ -7,6 +7,9 @@ metadata:
 spec:
   parentRefs:
     - name: go-web-gateway
+      sectionName: https
+  hostnames:
+    - d9babcg0cke6gkbv.fz03.alb.azure.com
   rules:
     - matches:
         - path:
@@ -16,3 +19,25 @@ spec:
         - name: go-web-app
           port: 80
           weight: 100
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: go-web-http-redirect
+  namespace: default
+spec:
+  parentRefs:
+    - name: go-web-gateway
+      sectionName: http
+  hostnames:
+    - d9babcg0cke6gkbv.fz03.alb.azure.com
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      filters:
+        - type: RequestRedirect
+          requestRedirect:
+            scheme: https
+            statusCode: 301
