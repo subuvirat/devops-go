@@ -8,7 +8,7 @@ image:
   repository: subashacr1002.azurecr.io/go-web
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "41429457710"
+  tag: "41486203647"
 
 nodeSelector:
   kubernetes.azure.com/agentpool: userpool
