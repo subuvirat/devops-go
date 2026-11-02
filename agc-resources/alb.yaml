@@ -1,0 +1,8 @@
+apiVersion: alb.networking.azure.io/v1
+kind: ApplicationLoadBalancer
+metadata:
+  name: agc-alb
+  namespace: azure-alb-system
+spec:
+  associations:
+    - "/subscriptions/18666a49-2275-47fc-8865-5be1f4f5fd92/resourceGroups/subu_rg/providers/Microsoft.Network/virtualNetworks/subu-vnet01/subnets/AGC-Subnet"
