@@ -1,0 +1,19 @@
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: agc-resources
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/subuvirat/devops-go.git
+    targetRevision: main
+    path: agc-resources
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: azure-alb-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
