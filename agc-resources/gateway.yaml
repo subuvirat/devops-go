@@ -3,6 +3,9 @@ kind: Gateway
 metadata:
   name: go-web-gateway
   namespace: default
+  annotations:
+    alb.networking.azure.io/alb-name: agc-alb
+    alb.networking.azure.io/alb-namespace: azure-alb-system
 spec:
   gatewayClassName: azure-alb-external
   listeners:
