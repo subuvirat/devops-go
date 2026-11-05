@@ -1,7 +1,7 @@
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: azurefile-rwx-mi
+  name: azurefile-rwx-mi-2
 provisioner: file.csi.azure.com
 parameters:
   skuName: Standard_LRS
