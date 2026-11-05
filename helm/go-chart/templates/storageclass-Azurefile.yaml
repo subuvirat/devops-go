@@ -1,0 +1,12 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: azurefile-rwx-mi
+provisioner: file.csi.azure.com
+parameters:
+  skuName: Standard_LRS
+  protocol: smb
+  mountWithManagedIdentity: "true"
+reclaimPolicy: Retain
+allowVolumeExpansion: true
+volumeBindingMode: Immediate
